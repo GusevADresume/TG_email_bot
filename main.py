@@ -1,19 +1,21 @@
+import traceback
 from mail_reader import checkMail
 from telebot import send_message
 import asyncio
+from logger import logger
 
 
 async def main():
     try:
-        claim = checkMail()
+        claim = await checkMail()
         if claim:
             try:
                 await send_message(claim)
-            except:
-                await (send_message(['!!!!!!!Something is wrong in bot part, check your email!!!!!!!']))
-    except:
-        await (send_message(['!!!!!!!Something is wrong in email, check your email!!!!!!!']))
-    await asyncio.sleep(2)
+            except Exception as e:
+                await (send_message([traceback.format_exc()]))
+    except Exception as e:
+        logger(str(traceback.format_exc()))
+    await asyncio.sleep(0.5)
 
 
 if __name__ == '__main__':

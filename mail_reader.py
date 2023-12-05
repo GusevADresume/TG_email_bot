@@ -5,25 +5,32 @@ import base64
 import re
 from config import mail_pass, mail_address, imap_server, incoming_address
 import quopri
+import traceback
+from logger import logger
 
 
-def checkMail():
-    imap = imaplib.IMAP4_SSL(imap_server)
-    imap.login(mail_address, mail_pass)
-    imap.select("INBOX")
-    mail_num = imap.search(None, "UNSEEN")[1][0]
-    if len(mail_num) > 0:
-        msg = imap.fetch(mail_num, '(RFC822)')
-        msg_obj = email.message_from_bytes(msg[1][0][1])
-        payload = msg_obj.get_payload()
-        if msg_obj['Resent-From'] == incoming_address or incoming_address in msg_obj['From']:
-            data_to_tg = []
-            for part in msg_obj.walk():
-                if part.get_content_maintype() == 'text' and part.get_content_subtype() == 'plain':
-                    data_to_tg.append(clean_body(get_body(part)))
-                if part.get_content_maintype() == 'application':
-                    data_to_tg.append(get_attachments(part))
-            return data_to_tg
+async def checkMail():
+    try:
+        imap = imaplib.IMAP4_SSL(imap_server)
+        imap.login(mail_address, mail_pass)
+        imap.select("INBOX")
+        mail_num = imap.search(None, "UNSEEN")[1][0]
+        if len(mail_num) > 0:
+            msg = imap.fetch(((mail_num.decode()).split())[-1], '(RFC822)')
+            msg_obj = email.message_from_bytes(msg[1][0][1])
+            payload = msg_obj.get_payload()
+            if msg_obj['Resent-From'] == incoming_address or incoming_address in msg_obj['From']:
+                data_to_tg = []
+                for part in msg_obj.walk():
+                    if part.get_content_maintype() == 'text' and part.get_content_subtype() == 'plain':
+                        data_to_tg.append(clean_body(get_body(part)))
+                    if part.get_content_maintype() == 'application':
+                        data_to_tg.append(get_attachments(part))
+                imap.logout()
+                return data_to_tg
+    except Exception as e:
+        await logger(str(traceback.format_exc()))
+        pass
 
 
 def get_body(part):

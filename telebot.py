@@ -6,6 +6,8 @@ from config import bot_token, chat_id
 
 async def send_message(msgText=list):
     bot = Bot(token=bot_token)
+    if len(msgText[0]) > 4000:
+        msgText[0] = msgText[0][0:3999]
     await bot.send_message(
         chat_id=chat_id,
         text=msgText[0],

@@ -6,10 +6,10 @@
 * Установите зависимости `pip install -r requirements.txt`
 * Создайте файл `config.py`
 * В `config.py` создайте следующие переменные:
-            - mail_address - адресс email
-            - mail_pass - пароль email
-            - imap_server - порт imap
-            - incoming_address - адрес входящей почты, который необходимо отслеживать
-            - bot_token - токен телеграмм бота
-            - chat_id - id чата, в который необходимо направлять сообщения
+- mail_address = адресс email
+- mail_pass = пароль email
+- imap_server = порт imap
+- incoming_address = адрес входящей почты, который необходимо отслеживать
+- bot_token = токен телеграмм бота
+- chat_id = id чата, в который необходимо направлять сообщения
   * Запустите `main.py`
